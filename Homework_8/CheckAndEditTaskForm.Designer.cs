@@ -32,6 +32,8 @@ namespace Homework_8
         {
             labelToInfoTask = new Label();
             panel1 = new Panel();
+            labelAssigneeTask = new Label();
+            textBoxAssigneeTask = new TextBox();
             groupBoxProgressTask = new GroupBox();
             radioButtonCompleted = new RadioButton();
             radioButtonInProgress = new RadioButton();
@@ -40,8 +42,6 @@ namespace Homework_8
             buttonEditTask = new Button();
             labelToEditTask = new Label();
             textBoxTitleTask = new TextBox();
-            textBoxAssigneeTask = new TextBox();
-            labelAssigneeTask = new Label();
             panel1.SuspendLayout();
             groupBoxProgressTask.SuspendLayout();
             SuspendLayout();
@@ -69,6 +69,26 @@ namespace Homework_8
             panel1.Name = "panel1";
             panel1.Size = new Size(719, 295);
             panel1.TabIndex = 13;
+            // 
+            // labelAssigneeTask
+            // 
+            labelAssigneeTask.Font = new Font("Microsoft Sans Serif", 13F, FontStyle.Bold);
+            labelAssigneeTask.Location = new Point(3, 14);
+            labelAssigneeTask.Name = "labelAssigneeTask";
+            labelAssigneeTask.Size = new Size(166, 43);
+            labelAssigneeTask.TabIndex = 18;
+            labelAssigneeTask.Text = "Исполнитель:";
+            // 
+            // textBoxAssigneeTask
+            // 
+            textBoxAssigneeTask.BackColor = SystemColors.Window;
+            textBoxAssigneeTask.BorderStyle = BorderStyle.FixedSingle;
+            textBoxAssigneeTask.Font = new Font("Segoe UI", 16F);
+            textBoxAssigneeTask.Location = new Point(175, 14);
+            textBoxAssigneeTask.Multiline = true;
+            textBoxAssigneeTask.Name = "textBoxAssigneeTask";
+            textBoxAssigneeTask.Size = new Size(526, 48);
+            textBoxAssigneeTask.TabIndex = 17;
             // 
             // groupBoxProgressTask
             // 
@@ -161,26 +181,6 @@ namespace Homework_8
             textBoxTitleTask.Size = new Size(526, 48);
             textBoxTitleTask.TabIndex = 9;
             // 
-            // textBoxAssigneeTask
-            // 
-            textBoxAssigneeTask.BackColor = SystemColors.Window;
-            textBoxAssigneeTask.BorderStyle = BorderStyle.FixedSingle;
-            textBoxAssigneeTask.Font = new Font("Segoe UI", 16F);
-            textBoxAssigneeTask.Location = new Point(175, 14);
-            textBoxAssigneeTask.Multiline = true;
-            textBoxAssigneeTask.Name = "textBoxAssigneeTask";
-            textBoxAssigneeTask.Size = new Size(526, 48);
-            textBoxAssigneeTask.TabIndex = 17;
-            // 
-            // labelAssigneeTask
-            // 
-            labelAssigneeTask.Font = new Font("Microsoft Sans Serif", 13F, FontStyle.Bold);
-            labelAssigneeTask.Location = new Point(3, 14);
-            labelAssigneeTask.Name = "labelAssigneeTask";
-            labelAssigneeTask.Size = new Size(166, 43);
-            labelAssigneeTask.TabIndex = 18;
-            labelAssigneeTask.Text = "Исполнитель:";
-            // 
             // CheckAndEditTaskForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -192,6 +192,7 @@ namespace Homework_8
             MinimizeBox = false;
             Name = "CheckAndEditTaskForm";
             Text = "Изменение задачи";
+            Load += CheckAndEditTaskForm_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             groupBoxProgressTask.ResumeLayout(false);

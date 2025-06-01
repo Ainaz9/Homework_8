@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using TaskLibrary;
+using TaskLibrary.Interfaces;
 
 namespace Homework_8
 {
@@ -43,7 +44,9 @@ namespace Homework_8
                 loggingBuilder.AddNLog("nlog.config");
             });
 
-            services.AddSingleton<TaskLib>();
+            services.AddSingleton<TaskLib>(); 
+            services.AddScoped<ITaskRepository, TaskRepository>(); 
+            services.AddScoped<ITaskService, TaskService>();       
             services.AddTransient<AddTaskForm>();
             services.AddTransient<CheckAndEditTaskForm>();
         }

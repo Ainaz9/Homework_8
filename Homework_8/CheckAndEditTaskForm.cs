@@ -1,21 +1,33 @@
 ﻿using Microsoft.Extensions.Logging;
 using TaskLibrary;
+using TaskLibrary.Interfaces;
 
 namespace Homework_8
 {
     public partial class CheckAndEditTaskForm : Form
     {
-        private readonly TaskLib dbLib;
+        private readonly ITaskRepository dbLib;
         private readonly ILogger<CheckAndEditTaskForm> log;
         private readonly TaskModel task;
 
-        public CheckAndEditTaskForm(TaskModel Task, TaskLib DbLib, ILogger<CheckAndEditTaskForm> Logger)
+        public CheckAndEditTaskForm(TaskModel Task, ITaskRepository DbLib, ILogger<CheckAndEditTaskForm> Logger)
         {
             InitializeComponent();
             log = Logger;
             dbLib = DbLib;
+            task = Task;
 
-            task = dbLib.SearchTask(Task);
+            log.LogInformation("Переход в окно для изменения задачи");
+        }
+
+        private async void CheckAndEditTaskForm_Load(object sender, EventArgs e)
+        {
+            var loadedTask = await dbLib.SearchTaskForIdAsync(task.Id);
+
+            task.Text = loadedTask.Text;
+            task.Assignee = loadedTask.Assignee;
+            task.Status = loadedTask.Status;
+
             textBoxTitleTask.Text = task.Text;
             textBoxAssigneeTask.Text = task.Assignee;
 
@@ -31,21 +43,20 @@ namespace Homework_8
                     radioButtonCompleted.Checked = true;
                     break;
             }
-
-            log.LogInformation("Переход в окно для изменения задачи");
         }
+
 
         private async void buttonEditTask_Click(object sender, EventArgs e)
         {
             var values = new List<RadioButton>
             { radioButtonQueue, radioButtonInProgress, radioButtonCompleted };
 
-            StatusForTask? selectedStatus = null;
+            StatusForTask selectedStatus = StatusForTask.Queue;
             foreach (var radio in values)
             {
                 if (radio.Checked)
                 {
-                    selectedStatus = (StatusForTask?)radio.Tag;
+                    selectedStatus = (StatusForTask)radio.Tag;
                 }
             }
             if (string.IsNullOrWhiteSpace(textBoxAssigneeTask.Text))
@@ -97,7 +108,7 @@ namespace Homework_8
                 await dbLib.RemoveTask(taskToDelete);
 
                 log.LogInformation($"Успешное удаление задачи: {task.Text}");
-                this.DialogResult = DialogResult.OK; 
+                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
         }

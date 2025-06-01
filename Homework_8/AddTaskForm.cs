@@ -1,18 +1,19 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TaskLibrary;
+using TaskLibrary.Interfaces;
 
 namespace Homework_8
 {
     public partial class AddTaskForm : Form
     {
-        private readonly TaskLib dbLib;
+        private readonly ITaskRepository dbLib;
 
         private readonly ILogger<AddTaskForm> log;
 
         private readonly IServiceProvider serviceProvider;
 
-        public AddTaskForm(TaskLib DbLib, ILogger<AddTaskForm> Logger, IServiceProvider ServiceProvider)
+        public AddTaskForm(ITaskRepository DbLib, ILogger<AddTaskForm> Logger, IServiceProvider ServiceProvider)
         {
             InitializeComponent();
             log = Logger;
