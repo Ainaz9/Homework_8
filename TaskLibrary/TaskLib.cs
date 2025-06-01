@@ -1,78 +1,68 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskLibrary;
+using TaskLibrary.Interfaces;
 
-namespace TaskLibrary
+public class TaskLib : ITaskRepository
 {
-    public class TaskLib
+    private readonly MyDbContext db;
+
+    public TaskLib()
     {
-        private MyDbContext? db;
+        db = new MyDbContext();
+    }
 
-        public TaskLib()
+    public List<TaskModel> LoadTasks()
+    {
+        try
         {
-            db = new MyDbContext();
+            return db.Tasks
+                     .Include(t => t.Status)
+                     .AsNoTracking()
+                     .ToList();
         }
-
-        public async Task<TaskModel> SearchTaskForIdAsync(Guid taskId)
+        catch
         {
-            return await db.Tasks.Include(t => t.Status).FirstOrDefaultAsync(t => t.Id == taskId);
+            throw new Exception("База данных не инициализирована");
         }
+    }
 
-        public TaskModel SearchTask(TaskModel Task)
+    public async Task<TaskModel> SearchTaskForIdAsync(Guid taskId)
+    {
+        return await db.Tasks.Include(t => t.Status).FirstOrDefaultAsync(t => t.Id == taskId);
+    }
+
+    public async Task<StatusModel> SearchStatusAsync(StatusForTask status)
+    {
+        var statusModel = await db.Statuses.FirstOrDefaultAsync(s => s.Status == status);
+        return statusModel;
+    }
+
+    public async Task<TaskModel> CreateTaskAsync(string text, string assignee, StatusModel status)
+    {
+        var task = new TaskModel
         {
-            return db.Tasks.Include(t => t.Status).FirstOrDefault(t => t.Id == Task.Id);
-        }
+            Id = Guid.NewGuid(),
+            Text = text,
+            Assignee = assignee,
+            Data = DateTime.Now,
+            StatusId = status.Id,
+            Status = status
+        };
 
-        public async Task<StatusModel> SearchStatusAsync(StatusForTask? status)
-        {
-            var statusModel = await db.Statuses.FirstOrDefaultAsync(s => s.Status == status);
-            await db.SaveChangesAsync();
-            return statusModel;
-        }
+        await db.AddAsync(task);
+        await db.SaveChangesAsync();
 
-        public async Task RemoveTask(TaskModel taskToDelete)
-        {
-            db.Tasks.Remove(taskToDelete);
-            await db.SaveChangesAsync();
-        }
+        return task;
+    }
 
-        public async Task SaveChangesAsync()
-        {
-            await db.SaveChangesAsync();
-        }
+    public async Task SaveChangesAsync()
+    {
+        await db.SaveChangesAsync();
+    }
 
-        public async Task<TaskModel> CreateTaskAsync(string text, string assignee, StatusModel status)
-        {
-            var task = new TaskModel
-            {
-                Id = Guid.NewGuid(),
-                Text = text,
-                Assignee = assignee,
-                Data = DateTime.Now,
-                StatusId = status.Id,
-                Status = status
-            };
-
-            await db.AddAsync(task);
-            await db.SaveChangesAsync();
-
-            return task;
-        }
-
-        public List<TaskModel> LoadTasks()
-        {
-            try
-            {
-                var tasks = db.Tasks
-                             .Include(t => t.Status)
-                             .AsNoTracking()
-                             .ToList();
-
-                return tasks;
-            }
-            catch 
-            {
-                throw new Exception("База данных не инициализированa"); 
-            }
-
-        }
+    public async Task RemoveTask(TaskModel taskToDelete)
+    {
+        db.Tasks.Remove(taskToDelete);
+        await db.SaveChangesAsync();
     }
 }
